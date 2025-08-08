@@ -13,11 +13,11 @@ def init_app():
     """初始化Faust应用"""
     try:
         root_api_router = faust.App(
-            KAFKA_CONFIG['test_config']['app_name'],
+            id=KAFKA_CONFIG['test_config']['app_name'],
             broker=KAFKA_CONFIG['test_config']['broker'],
-
+            group_instance_id='faust-worker-01',  # 可唯一标识此消费者实例
         )
-
+        root_api_router.consumer_generation_id='faust-worker-01'
         # 为Faust应用添加日志处理器
         add_faust_handlers()
 

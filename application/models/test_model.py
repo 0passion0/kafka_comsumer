@@ -10,4 +10,10 @@ class TestData(faust.Record, serializer='json'):
     viewCount: int
 
     def get(self):
+        """
+        将对象属性转换为元组格式返回
+        
+        Returns:
+            tuple: 包含title, author, viewCount的元组
+        """
         return tuple([self.title, self.author, self.viewCount])

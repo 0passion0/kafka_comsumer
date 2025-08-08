@@ -10,7 +10,7 @@ def register_test_agent(app, topic):
     """
 
     # 创建处理器实例
-    handler = TestHandler("kafka_data", ("title", "viewCount", "author"))
+    handler = TestHandler("kafka_data", ("title", "viewCount", "author")) # 表名 ， 字段
 
     @app.agent(topic)
     async def process(stream):
@@ -18,8 +18,8 @@ def register_test_agent(app, topic):
         处理来自Kafka主题的消息流
         :param stream: 消息流对象
         """
-        async for records in stream.take(BATCH_CONFIG['size'], within=BATCH_CONFIG['timeout']):
+        async for records in stream.take(BATCH_CONFIG['size'], within=BATCH_CONFIG['timeout']):  # 按批次处理消息（流式监听）
             # 批量处理消息
-            handler.batch_handle(records)
+            handler.batch_handle(records)  # 处理批次
 
     return process
