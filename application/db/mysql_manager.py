@@ -89,13 +89,11 @@ class MySQLTupleModel:
     极简元组插入器
     fields 是有序字段名元组，insert 时按同顺序传入值即可。
     """
+    db = MySQLManager('tlg')
 
-    __slots__ = ("table", "fields", "_db", "_sql")
-
-    def __init__(self, table: str, fields: Tuple[str, ...], connect_key: str = "default"):
+    def __init__(self, table: str, fields: Tuple[str, ...]):
         self.table = table
         self.fields = fields
-        self._db = MySQLManager(connect_key)
 
         # 预生成 SQL：INSERT INTO `t` (`f1`,`f2`,...) VALUES (%s,%s,...)
         columns = ",".join(f"`{f}`" for f in fields)
@@ -105,7 +103,7 @@ class MySQLTupleModel:
     # ------------- API -------------
     def insert_one(self, record: Tuple) -> int:
         """返回新自增 id"""
-        conn = self._db.mysql_pool.connection()
+        conn = self.db.mysql_pool.connection()
         try:
             with conn.cursor() as cur:
                 cur.execute(self._sql, record)
@@ -122,7 +120,7 @@ class MySQLTupleModel:
         """返回影响行数"""
         if not records:
             return 0
-        conn = self._db.mysql_pool.connection()
+        conn = self.db.mysql_pool.connection()
         try:
             with conn.cursor() as cur:
                 cur.executemany(self._sql, records)
@@ -141,8 +139,7 @@ if __name__ == "__main__":
     # 假设表 user(id, name, age, email)
     user = MySQLTupleModel(
         table="kafka_data",
-        fields=("title", "viewCount", "author"),
-        connect_key='tlg'
+        fields=("title", "viewCount", "author")
     )
 
     # 单条
