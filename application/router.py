@@ -1,6 +1,6 @@
 import faust
 from application.constant import KAFKA_CONFIG
-from application.faust_app.test_topic.process import TestHandler
+from application.faust_app.agents import register_test_agent
 from application.models.test_model import TestData
 
 
@@ -21,7 +21,7 @@ root_router = init_app()
 topic = root_router.topic(KAFKA_CONFIG['topic_test'], value_type=TestData)
 
 # 注册处理器
-handler = TestHandler(root_router, topic, "kafka_data", ("title", "viewCount", "author"))
+test_agent = register_test_agent(root_router, topic)
 
 if __name__ == '__main__':
     root_router.main()
