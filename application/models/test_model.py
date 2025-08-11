@@ -2,6 +2,7 @@ import faust
 from abc import ABC, abstractmethod
 from typing import ClassVar, Dict, Any, Type, Iterable, Tuple, Union
 
+
 # ---------------------------------------------------------------------
 # 处理器基类（使用 process 替代 __call__）
 # ---------------------------------------------------------------------
@@ -14,6 +15,7 @@ class Processor(ABC):
     :param record: 将被处理的记录对象（实例）
     :returns: None
     """
+
     @abstractmethod
     def process(self, record: Any) -> None:
         """
@@ -57,6 +59,7 @@ class ClampViewCount(Processor):
             except Exception:
                 record.viewCount = 0
 
+
 # ---------------------------------------------------------------------
 # 抽象数据基类
 # ---------------------------------------------------------------------
@@ -71,7 +74,7 @@ class BaseData(faust.Record, ABC, serializer='json'):
                           使用 ClassVar 避免被 Faust 当成字段解析。
     """
     custom_pipeline: ClassVar[Dict[int,
-                                   Union[Type[Processor], Processor, callable]]] = {}
+    Union[Type[Processor], Processor, callable]]] = {}
 
     def __post_init__(self) -> None:
         """
@@ -133,6 +136,7 @@ class BaseData(faust.Record, ABC, serializer='json'):
         """
         raise NotImplementedError
 
+
 # ---------------------------------------------------------------------
 # 示例子类：TestData（使用 process，兼容函数或实例）
 # ---------------------------------------------------------------------
@@ -148,9 +152,9 @@ class TestData(BaseData):
     viewCount: int
 
     custom_pipeline = {
-        10: StripTitle,          # 传类，会在执行时实例化
-        20: NormalizeAuthor(),   # 传实例，直接可调用（优先调用 process）
-        30: ClampViewCount       # 传类
+        10: StripTitle,  # 传类，会在执行时实例化
+        20: NormalizeAuthor(),  # 传实例，直接可调用（优先调用 process）
+        30: ClampViewCount  # 传类
     }
 
     def get(self) -> tuple:
@@ -159,7 +163,7 @@ class TestData(BaseData):
 
         :returns: (title, author, viewCount)
         """
-        return (self.title, self.author, self.viewCount)
+        return self.title, self.author, self.viewCount,
 
 
 # ---------------------------------------------------------------------

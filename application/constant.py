@@ -6,7 +6,7 @@
 KAFKA_CONFIG = {
     "test_config": {
         'broker': 'kafka://127.0.0.1:19092',
-        'app_name': 'faust_mysql_batch'
+        'app_name': 'faust_mysql_batch2'
     },
     "topic_test": "temp4"
 }

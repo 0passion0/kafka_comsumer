@@ -15,9 +15,8 @@ def init_app():
         root_api_router = faust.App(
             id=KAFKA_CONFIG['test_config']['app_name'],
             broker=KAFKA_CONFIG['test_config']['broker'],
-            group_instance_id='faust-worker-01',  # 可唯一标识此消费者实例
+            # consumer_enable_auto_commit=True,
         )
-        root_api_router.consumer_generation_id='faust-worker-01'
         # 为Faust应用添加日志处理器
         add_faust_handlers()
 
@@ -31,10 +30,10 @@ def init_app():
 
 
 root_router = init_app()
-topic = root_router.topic(KAFKA_CONFIG['topic_test'], value_type=TestData)  # 创建主题绑定数据模型
 
 # 注册处理器
-test_agent = register_test_agent(root_router, topic) # 注册测试主题的处理agent
+topic = root_router.topic(KAFKA_CONFIG['topic_test'], value_type=TestData)  # 创建主题绑定数据模型
+test_agent = register_test_agent(root_router, topic)  # 注册测试主题的处理agent
 logger.info("测试处理器已注册，主题: %s", KAFKA_CONFIG['topic_test'])
 
 if __name__ == '__main__':
