@@ -1,44 +1,51 @@
 import json
 
-from fasttransform import Transform
+from application.db.mysql_manager import MysqlDBDataStream
+from application.piplines.base_pipline import BasePipeline
+from application.utils.decorators import log_execution
 
-from application.db.mysql_manager import MySQLTupleModel
-from pydantic import BaseModel, Field, model_validator
 
+class InformationIntoPipeline(BasePipeline):
+    """
+    将信息对象转换为数据库可插入格式并批量写入 MySQL。
+    """
+    sql_model = MysqlDBDataStream(
+        "info",
+        fields=(
+            "uid",
+            "topic",
+            "name",
+            "data_type",
+            "menu_list",
+            "info_date",
+            "info_section",
+            "info_author",
+            "info_source",
+            "affiliated_data",
+        ),
+    )
 
-class InformationIntoPipeline(Transform):
-    sql_model = MySQLTupleModel("info", fields=(
-        "uid",
-        "topic",
-        "name",
-        "data_type",
-        "menu_list",
-        "info_date",
-        "info_section",
-        "info_author",
-        "info_source",
-        "affiliated_data",
-    ))
-
-    # def insert_to_storage(self, records: List[Any]):
-    #     self.sql_model.insert_many(records)
     def apply(self, value):
+        """
+        将单个信息对象转换为数据库字段元组。
+        """
         return (
             value.uid,  # str
             value.topic,  # str
             value.name,  # str
             value.data_type,  # str
-            json.dumps(value.menu_list),  # list
+            json.dumps(value.menu_list),  # list -> str
             value.data['info_date'],  # str
-            json.dumps(value.data['info_section']),  # dict
+            json.dumps(value.data['info_section']),  # dict -> str
             value.data['info_author'],  # str
             value.data['info_source'],  # str
-            json.dumps(value.affiliated_data),  # dict
+            json.dumps(value.affiliated_data),  # dict -> str
         )
 
-    def encodes(self, obj):
-        for i in range(len(obj)):
-            obj[i] = self.apply(obj[i])
-
-        self.sql_model.insert_many(obj)
-        return obj
+    @log_execution
+    def apply_batch(self, value):
+        """
+        批量插入数据库。
+        """
+        self.sql_model.insert_many(value)
+        return value

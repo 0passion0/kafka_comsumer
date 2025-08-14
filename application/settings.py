@@ -1,16 +1,20 @@
 # 批处理配置
 BATCH_CONFIG = {
-    'size': 1,
-    'timeout': 1.0
+    'size': 10,
+    'timeout': 10.0
 }
 
 # Kafka配置
 KAFKA_CONFIG = {
-    "test_config": {
+    "default": {
         'broker': 'kafka://127.0.0.1:19092,kafka://127.0.0.1:19096,kafka://127.0.0.1:19100',
         'app_name': 'faust_mysql_batch'
     },
-    "topic_test": "temp4"
+}
+TOPIC_CONFIG = {
+    "default": {
+        "topic": "temp4"
+    }
 }
 
 # 数据库配置

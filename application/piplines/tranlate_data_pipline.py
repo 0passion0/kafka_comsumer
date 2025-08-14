@@ -1,15 +1,8 @@
-from fasttransform import Transform
+from application.piplines.base_pipline import BasePipeline
 
 
-class TranlateDatePipeline(Transform):
+class TranlateDatePipeline(BasePipeline):
 
     def apply(self, value):
-        value.data['info_date'] = value.data['info_date'][:7]
+        value.data['info_date'] = value.data['info_date'][:7]  # 简单字符串截取
         return value
-
-    def encodes(self, obj):
-        for i in range(len(obj)):
-            obj[i] = self.apply(obj[i])
-        return obj
-
-

@@ -85,7 +85,7 @@ class MySQLManager:
         )
 
 
-class MySQLTupleModel:
+class MysqlDBDataStream:
     """
     极简元组插入器
     fields 是有序字段名元组，insert 时按同顺序传入值即可。
@@ -138,7 +138,7 @@ class MySQLTupleModel:
 # ---------------------------------
 if __name__ == "__main__":
     # 假设表 user(id, name, age, email)
-    user = MySQLTupleModel(
+    user = MysqlDBDataStream(
         table="kafka_data",
         fields=("title", "viewCount", "author")
     )
