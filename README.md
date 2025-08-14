@@ -1,38 +1,46 @@
 # Kafka Consumer 项目
 
-基于 Faust 框架的 Kafka 消费者项目，用于从 Kafka 主题中消费消息并批量处理后存储到目标库（目前只有 MySQL 数据库）。
+基于 Faust 框架的 Kafka 消费者项目，用于从 Kafka 主题中消费消息并批量处理后存储到目标库。
 
 ## 项目结构
 
 ```
 .
-├── application/                 # 应用核心代码目录
-│   ├── db/                     # 数据库操作模块
+├── application/                    # 应用核心代码目录
+│   ├── consumers/                 # 消息消费者模块
+│   │   ├── base_consumer.py       # 消费者基类
+│   │   ├── information_consumer/  # 资讯类消息消费者
+│   │   │   ├── __init__.py
+│   │   │   └── process.py         # 资讯类消息处理逻辑
+│   │   └── __init__.py
+│   ├── db/                        # 数据库操作模块
 │   │   ├── __init__.py
-│   │   ├── mongodb_manager.py  # MongoDB数据库管理
-│   │   ├── mysql_manager.py    # MySQL数据库管理
-│   │   └── redis_manager.py    # Redis数据库管理
-│   ├── faust_app/              # Faust应用相关代码
-│   │   ├── test_topic/         # 特定主题处理逻辑
-│   │   │   └── process.py      # 消息处理实现
+│   │   └── mysql_manager.py       # MySQL数据库管理
+│   ├── models/                    # 数据模型定义
 │   │   ├── __init__.py
-│   │   └── agents.py           # Faust agents定义
-│   ├── models/                 # 数据模型定义
+│   │   └── kafka_models/          # Kafka消息数据模型
+│   │       ├── base_data_structure.py           # 基础数据结构
+│   │       ├── information_data_structure.py     # 资讯类数据结构
+│   │       └── __init__.py
+│   ├── piplines/                  # 数据处理管道模块
+│   │   ├── base_pipline.py        # 管道基类
+│   │   ├── information_into_pipline.py    # 资讯数据入库管道
+│   │   ├── tranlate_data_pipline.py       # 数据转换管道
+│   │   └── __init__.py
+│   ├── utils/                     # 工具类模块
 │   │   ├── __init__.py
-│   │   └── test_model.py       # 测试数据模型
-│   ├── utils/                  # 工具类模块
-│   │   ├── __init__.py
-│   │   └── logger.py           # 日志管理模块
+│   │   ├── decorators.py          # 装饰器工具
+│   │   └── logger.py              # 日志管理模块
 │   ├── __init__.py
-│   ├── constant.py             # 项目常量配置
-│   ├── router.py               # 路由配置
-│   └── settings.py             # 项目设置
-├── extend/                     # 扩展目录
-├── faust_mysql_batch-data/     # Faust数据目录
-├── runtime/                    # 运行时目录
-│   └── log/                    # 日志文件目录
-├── requirements.txt            # 项目依赖
-└── README.md                   # 项目说明文档
+│   ├── constant.py                # 项目常量配置
+│   ├── router.py                  # 路由配置
+│   └── settings.py                # 项目设置
+├── runtime/                       # 运行时目录
+│   └── log/                       # 日志文件目录
+├── test/                          # 测试目录
+│   └── main.py                    # 测试入口文件
+├── requirements.txt               # 项目依赖
+└── README.md                     # 项目说明文档
 ```
 
 ## 功能介绍
@@ -40,130 +48,51 @@
 本项目主要实现以下功能：
 
 1. 从 Kafka 主题中消费消息
-2. 对消息进行批量处理（默认批量大小为10000条，超时时间为10秒）
+2. 对消息进行批量处理（默认批量大小为10条，超时时间为10秒）
 3. 将处理后的数据批量写入 MySQL 数据库
 
 ## 技术栈
 
-- Python 3.12 Faust - Python流处理库
+- Python 3.12
+- Faust - Python流处理库
 - Kafka - 消息队列
 - MySQL - 关系型数据库
-- Redis - 内存数据库
-- MongoDB - 文档数据库
 
-## 配置说明
+流程说明：
 
-### Kafka 配置
-
-在 [constant.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/constant.py) 文件中配置 Kafka
-相关信息：
-
-```python
-KAFKA_CONFIG = {
-    "test_config": {
-        'broker': 'kafka_models://127.0.0.1:19092',
-        'app_name': 'faust_mysql_batch'
-    },
-    "topic_test": "temp4"
-}
-```
-
-### 数据库配置
-
-在 [constant.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/constant.py) 文件中配置各类数据库连接信息：
-
-1. MySQL 配置：
-
-```python
-MYSQL_DATABASES = {
-    "default": {
-        "type": "mysql",
-        'user': '',
-        'password': '',
-        'host': '192.168.1.245',
-        'port': 3306,
-        'database': 'raw_data',
-        "charset": "utf8mb4"
-    },
-    "tlg": {
-        "type": "mysql",
-        'user': 'root',
-        'password': '',
-        'host': '127.0.0.1',
-        'port': 3306,
-        'database': 'mydata',
-        "charset": "utf8mb4"
-    },
-}
-```
-
-2. MongoDB 配置
-3. Redis 配置
-
-### 批处理配置
-
-在 [settings.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/settings.py) 文件中配置批处理参数：
-
-```python
-BATCH_CONFIG = {
-    'size': 10000,  # 批处理大小
-    'timeout': 10.0  # 超时时间(秒)
-}
-```
-
-## 核心模块说明
-
-### Faust 应用 (faust_app/)
-
-Faust 应用模块包含消息处理的逻辑：
-
-- [agents.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/faust_app/agents.py): 定义 Faust
-  agents，负责注册消息处理器
-- [test_topic/process.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/faust_app/test_topic/process.py):
-  实现具体的消息处理逻辑
-
-### 数据库操作 (db/)
-
-数据库操作模块封装了各种数据库的连接和操作：
-
-- [mysql_manager.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/db/mysql_manager.py): MySQL
-  数据库连接池管理和操作封装
-- [mongodb_manager.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/db/mongodb_manager.py):
-  MongoDB 数据库操作封装
-- [redis_manager.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/db/redis_manager.py): Redis
-  数据库操作封装
-
-### 数据模型 (models/)
-
-数据模型模块定义了 Kafka 消息的数据结构：
-
-- [test_model.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/models/test_model.py): 定义测试数据模型
-
-### 工具类 (utils/)
-
-工具类模块提供通用功能：
-
-- [logger.py](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/utils/logger.py): 日志管理模块，统一处理项目中的日志记录
+1. Kafka生产者将消息发送到指定主题
+2. Faust应用作为消费者从Kafka主题订阅消息
+3. 根据消息类型路由到对应的消费者（如InformationConsumer）
+4. 消费者使用批处理机制收集消息（默认每10条或超时10秒）
+5. 批量数据通过Pipeline管道依次处理：
+   - TranlateDatePipeline：处理日期格式
+   - InformationIntoPipeline：将数据转换为数据库格式并批量插入
+6. 处理后的数据批量写入MySQL数据库
 
 ## 运行方式
 
-1. 安装依赖：
-
 ```bash
+# 安装依赖
 pip install -r requirements.txt
-```
 
-2. 启动 Faust 应用：
-
-```bash
+# 启动Faust应用
 faust --debug -A application.router:root_router worker -l info
 ```
 
-## 日志管理
+## 扩展说明
 
-项目使用统一的日志管理模块，所有日志将记录到 [runtime/log/](file:///D:/company_project/kafka_comsumer/kafka_comsumer/runtime/log)
-目录下，按日期分割日志文件。日志格式如下：
+项目采用模块化设计，支持灵活扩展：
 
-```
-[时间戳] [日志级别] [模块名称] [函数名:行号] 消息内容
+1. 添加新的消息类型：
+   - 在 [application/models/kafka_models/](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/models/kafka_models) 下创建新的数据结构模型
+   - 在 [application/consumers/](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/consumers/) 下创建对应的消费者
+   - 在 [application/piplines/](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/piplines/) 下创建对应的处理管道
+
+2. 添加新的数据库支持：
+   - 在 [application/db/](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/db/) 下创建新的数据库管理模块
+   - 修改 [application/settings.py](file:///D:/company_project/kafka_comsumer/kakfa_comsumer/application/settings.py) 添加数据库配置
+
+3. 自定义处理流程：
+   - 继承 [BasePipeline](file:///D:/company_project/kafka_comsumer/kafka_comsumer/application/piplines/base_pipline.py) 创建新的处理管道
+   - 在消费者中配置管道执行顺序
 ```
