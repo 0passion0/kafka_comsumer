@@ -61,7 +61,7 @@
 ```python
 KAFKA_CONFIG = {
     "test_config": {
-        'broker': 'kafka://127.0.0.1:19092',
+        'broker': 'kafka_models://127.0.0.1:19092',
         'app_name': 'faust_mysql_batch'
     },
     "topic_test": "temp4"

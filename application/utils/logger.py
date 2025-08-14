@@ -52,6 +52,10 @@ class LoggerManager:
         )
         file_handler.setLevel(level)
 
+        # 创建控制台处理器
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(level)
+
         # 创建格式器并添加到处理器
         formatter = logging.Formatter(
             '[%(asctime)s] [%(levelname)s] [%(name)s] [%(funcName)s:%(lineno)d] %(message)s'

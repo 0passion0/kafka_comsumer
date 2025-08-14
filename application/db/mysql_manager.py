@@ -12,7 +12,8 @@ from pymysql.cursors import DictCursor
 from dbutils.pooled_db import PooledDB
 from threading import Lock
 
-from application.constant import MYSQL_DATABASES
+from application.settings import MYSQL_DATABASES
+from application.utils.decorators import log_execution
 
 
 class MySQLManager:
@@ -89,7 +90,7 @@ class MySQLTupleModel:
     极简元组插入器
     fields 是有序字段名元组，insert 时按同顺序传入值即可。
     """
-    db = MySQLManager('tlg')
+    db = MySQLManager()
 
     def __init__(self, table: str, fields: Tuple[str, ...]):
         self.table = table
@@ -127,7 +128,7 @@ class MySQLTupleModel:
                 rows = cur.rowcount
             conn.commit()
             return rows
-        except Exception:
+        except Exception as e:
             conn.rollback()
             raise
         finally:
