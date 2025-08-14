@@ -1,7 +1,7 @@
 import faust
 
 from application.consumers.informationto_agent.process import InformationtoConsumer
-from application.models.base_model import InformationtoData
+from application.models.kafka_models.information_data_structure import InformationDataStructure
 from application.settings import KAFKA_CONFIG
 from application.utils import get_logger
 from application.utils.logger import add_faust_handlers
@@ -54,7 +54,7 @@ class FaustAppManager:
 
 # 初始化应用管理器
 app_manager = FaustAppManager()
-app_manager.register_agent('temp4', InformationtoConsumer(), value_type=InformationtoData)
+app_manager.register_agent('temp4', InformationtoConsumer(), value_type=InformationDataStructure)
 root_router = app_manager.get_app()
 
 if __name__ == '__main__':
