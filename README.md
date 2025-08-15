@@ -1,8 +1,14 @@
-# Kafka Consumer 项目
+# Kafka Consumer 项目（考虑是否可以将生产者也使用faust一起管理 ，但是单个机器会影响性能）
 
 基于 Faust 框架的 Kafka 消费者项目，用于从 Kafka 主题中消费消息并批量处理后存储到目标库。
 
+
 ## 项目结构
+### 为什么使用faust
+
+- 1、Faust 提供了 agent + stream + table 等机制，直接支持批量收集和异步处理，开发成本低。kafka-python 实现同样的批处理逻辑需要手动管理缓冲区、定时器和异步逻辑，代码会复杂很多。
+- 2、Faust 支持类似 路由机制和 topic 分组，可以轻松按类型分发到不同 agent。使用 kafka-python，必须自己维护 topic/消息类型的映射，代码量大且容易出错
+- 3、Faust 内部封装了 Kafka 的连接逻辑，只需配置 broker 地址，框架会自动管理消费者组、分区订阅和再平衡。kafka-python 需要自己手动管理 KafkaConsumer 或 KafkaProducer，还要处理重连、心跳和分区再平衡等复杂逻辑
 
 ```
 .
