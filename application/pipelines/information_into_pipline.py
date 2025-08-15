@@ -1,7 +1,7 @@
 import json
 
 from application.db.mysql_manager import MysqlDBDataStream
-from application.piplines.base_pipline import BasePipeline
+from application.pipelines.base_pipeline import BasePipeline
 from application.utils.decorators import log_execution
 
 

@@ -16,7 +16,7 @@ class BaseConsumer(ABC):
         每次批量处理的数据条数，从配置 BATCH_CONFIG 获取。
     timeout_seconds : int
         批量获取数据时的超时时间（秒），从配置 BATCH_CONFIG 获取。
-    pip_list : list
+    pipe_list : list
         包含 Pipeline 步骤的列表，可在子类中定义具体处理流程。
     pipeline : Pipeline
         FastTransform Pipeline 实例，用于处理每批数据。
@@ -24,13 +24,13 @@ class BaseConsumer(ABC):
 
     batch_size = BATCH_CONFIG['size']
     timeout_seconds = BATCH_CONFIG['timeout']
-    pip_list = []
+    pipe_list = []
 
     def __init__(self):
         """
         初始化 BaseConsumer 实例，创建 Pipeline 对象。
         """
-        self.pipeline = Pipeline(self.pip_list)
+        self.pipeline = Pipeline(self.pipe_list)
 
     async def __call__(self, stream):
         """

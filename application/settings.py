@@ -7,7 +7,7 @@ BATCH_CONFIG = {
 # Kafka配置
 KAFKA_CONFIG = {
     "default": {
-        'broker': 'kafka://127.0.0.1:19092,kafka://127.0.0.1:19096,kafka://127.0.0.1:19100',
+        'broker': 'kafka://180.76.250.147:19092,kafka://180.76.250.147:19096,kafka://180.76.250.147:19100',
         'app_name': 'faust_mysql_batch'
     },
 }

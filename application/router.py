@@ -102,5 +102,6 @@ app_manager.register_agent(
 root_router = app_manager.get_app()
 
 if __name__ == '__main__':
+    # 注意得现有生产者才能消费
     logger.info("正在启动Faust应用")
     root_router.main()

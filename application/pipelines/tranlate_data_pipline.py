@@ -1,4 +1,4 @@
-from application.piplines.base_pipline import BasePipeline
+from application.pipelines.base_pipeline import BasePipeline
 
 
 class TranlateDatePipeline(BasePipeline):
