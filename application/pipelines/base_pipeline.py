@@ -11,7 +11,7 @@ class BasePipeline(Transform):
     抽象基类，定义数据管道的基础处理逻辑。
     子类必须实现 apply 和 apply_batch 方法。
     """
-    change_data_structure = True
+    change_data_structure = True  # 是否在通过管道后变更数据（默认是，在入库或者一些操作是会变更数据结构但是后续还要用到原结构时使用）
 
     def encodes(self, obj: List[DataStructure]):
         """
