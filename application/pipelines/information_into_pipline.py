@@ -20,19 +20,20 @@ class InformationIntoPipeline(BasePipeline):
         """
         return {
             "information_list": {
-                "information_id": value.uid,
-                "information_name": {'zh': value.name},
-                "information_description": {'zh': value.data['description']},
-                "original_link": value.metadata['details_page'],
-                "original_language": value.metadata['marc_code'],
-                "publish_date": value.data['info_date'],
+                "information_id": value.uid,  # 信息唯一标识
+                "information_name": {'zh': value.name},  # 信息名称
+                "information_description": {'zh': value.data['description']},  # 信息描述
+                "original_link": value.metadata['details_page'],  # 原始链接
+                "original_language": value.metadata['marc_code'],  # 原始语言
+                "publish_date": value.data['info_date'],  # 发布时间
                 "metadata": {"info_author": value.data['info_author'], "info_source": value.data['info_source']},
-                "source_id": '',
+                # 信息元数据
+                # "source_id": find_source_id(value.metadata['details_page']),
             },
             'information_tagging_relationships': {
-                'information_id': value.uid,
-                'tag_code': value.tag_code,
-                'tag_value': value.tag_values,
+                'information_id': value.uid,  # 信息唯一标识
+                'tag_code': value.tag_code,  # 标签code
+                'tag_value': value.tag_values,  # 标签值
             },
             "information_attachment": [
                 {
@@ -60,8 +61,8 @@ class InformationIntoPipeline(BasePipeline):
             into_information_tagging_relationships.append(item['information_tagging_relationships'])
             into_information_attachment.extend(item['information_attachment'])
 
-        InformationList.insert_many(into_information_list).execute()
-        InformationTagsRelationship.insert_many(into_information_tagging_relationships).execute()
-        InformationAttachments.insert_many(into_information_attachment).execute()
+        InformationList.insert_many(into_information_list).execute()  # 信息列表
+        InformationTagsRelationship.insert_many(into_information_tagging_relationships).execute()  # 信息标签关系
+        InformationAttachments.insert_many(into_information_attachment).execute()  # 信息附件
 
         return value
