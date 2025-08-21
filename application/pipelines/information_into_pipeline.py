@@ -23,11 +23,11 @@ class InformationIntoPipeline(BasePipeline):
             "information_list": {
                 "information_id": value.uid,  # 信息唯一标识
                 "information_name": {'zh': value.name},  # 信息名称
-                "information_description": {'zh': value.data['description']},  # 信息描述
-                "original_link": value.metadata['details_page'],  # 原始链接
-                "original_language": value.metadata['marc_code'],  # 原始语言
-                "publish_date": value.data['info_date'],  # 发布时间
-                "metadata": {"info_author": value.data['info_author'], "info_source": value.data['info_source']},
+                "information_description": {'zh': value.data.description},  # 信息描述
+                "original_link": value.metadata.details_page,  # 原始链接
+                "original_language": value.metadata.marc_code,  # 原始语言
+                "publish_date": value.data.info_date,  # 发布时间
+                "metadata": {"info_author": value.data.info_author, "info_source": value.data.info_source},
                 # 信息元数据
                 # "source_id": find_source_id(value.metadata['details_page']),
             },
@@ -43,7 +43,7 @@ class InformationIntoPipeline(BasePipeline):
                     "attachment_address": link.get("accessory_url", ''),  # 附件存储地址（OSS地址）
                     "display_order": index + 1  # 展示顺序（从1开始）
                 }
-                for index, link in enumerate(value.affiliated_data["link_data"])
+                for index, link in enumerate(value.affiliated_data.link_data)
             ],
             'information_section':[
 

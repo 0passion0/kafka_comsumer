@@ -17,6 +17,5 @@ class InformationConsumer(BaseConsumer):
     pipe_list : list
         包含本消费者的处理 Pipeline 列表，按顺序执行。
     """
-
     # 定义具体处理流程的 Pipeline 顺序
     pipe_list = [InformationDeduplicationPipeline(), InformationIntoPipeline()]
