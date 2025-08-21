@@ -1,8 +1,10 @@
 from typing import Any, ClassVar, Dict, List
-from pydantic import BaseModel, Field, model_validator
+
+import faust
+from pydantic import Field, model_validator
 
 
-class DataStructure(BaseModel):
+class DataStructure(faust.Record):
     """
     通用数据结构模型类，基于 Pydantic 实现，旨在统一管理和校验多类型数据及其相关信息。
 

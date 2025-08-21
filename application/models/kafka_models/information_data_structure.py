@@ -4,7 +4,7 @@ from application.models.kafka_models.base_data_structure import DataStructure
 from typing import ClassVar, Dict
 
 
-class InformationDataStructure(faust.Record,DataStructure):
+class InformationDataStructure(DataStructure):
     """
         专用于资讯类数据的结构模型，继承自 DataStructure。
 
