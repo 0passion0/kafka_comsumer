@@ -1,6 +1,9 @@
+import copy
 from abc import abstractmethod
-from typing import List
+from typing import List, Any
 from fasttransform import Transform
+
+from application.models.kafka_models.base_data_structure import DataStructure
 
 
 class BasePipeline(Transform):
@@ -8,22 +11,31 @@ class BasePipeline(Transform):
     抽象基类，定义数据管道的基础处理逻辑。
     子类必须实现 apply 和 apply_batch 方法。
     """
+    change_data_structure = True
 
-    def encodes(self, obj):
+    def encodes(self, obj: List[DataStructure]):
         """
         异步处理输入序列，将每个元素应用 apply 方法，
         然后批量应用 apply_batch 方法。
         """
+        copy_obj = []
+        if not self.change_data_structure:
+            # 深拷贝，确保源数据不被修改
+            copy_obj = copy.deepcopy(obj)
+
         # 对每个元素单独处理
         for i in range(len(obj)):
             obj[i] = self.apply(obj[i])
 
         # 批量处理
-        self.apply_batch(obj)
+        obj = self.apply_batch(obj)
+
+        if not self.change_data_structure:
+            return copy_obj
         return obj
 
     @abstractmethod
-    def apply(self, value):
+    def apply(self, value: DataStructure):
         """
         对单个元素进行处理。
         子类必须实现。

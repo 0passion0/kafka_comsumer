@@ -1,6 +1,5 @@
 from application.consumers.base_consumer import BaseConsumer
 from application.pipelines.information_into_pipline import InformationIntoPipeline
-from application.pipelines.tranlate_data_pipline import TranlateDatePipeline
 
 
 class InformationConsumer(BaseConsumer):
@@ -19,4 +18,4 @@ class InformationConsumer(BaseConsumer):
     """
 
     # 定义具体处理流程的 Pipeline 顺序
-    pipe_list = [TranlateDatePipeline(), InformationIntoPipeline()]
+    pipe_list = [InformationIntoPipeline()]

@@ -40,16 +40,14 @@ class InformationDataStructure(faust.Record,DataStructure):
             "info_date": str,  # 资讯发布时间，日期格式的字符串
             "info_section": list,  # 资讯正文的段落内容，纯文本格式
             "info_author": str,  # 资讯作者名称
-            "info_source": str,  # 资讯来源，提供信息出处
+            'description':str,
+            # "info_source": str,  # 资讯来源，提供信息出处
 
         },
         "metadata": {
-            "raw_html": str,  # 资讯的原始HTML代码，未经处理的页面内容
-            "info_html": str,  # 过滤后的正文HTML，去除无关标签后的正文部分
             "marc_code": str,  # 资讯原语言类型，标识内容语言的代码
             "main_site": str,  # 主站链接，资讯所属主站的URL
             "details_page": str,  # 详情页链接，资讯具体内容页面的URL
-            "resource_label": str,  # 资源标签，用于分类或标识资讯的关键词
         },
         "affiliated_data": {
             "link_data": list,  # 附件列表，包含附件的文件信息字典

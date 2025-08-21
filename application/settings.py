@@ -34,7 +34,7 @@ MYSQL_DATABASES = {
         'password': 'Btlg2002',
         'host': '127.0.0.1',
         'port': 3306,
-        'database': 'mydata',
+        'database': 'info',
         "charset": "utf8mb4"
     },
 }
