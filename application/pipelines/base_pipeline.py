@@ -34,7 +34,6 @@ class BasePipeline(Transform):
             return copy_obj
         return obj
 
-    @abstractmethod
     def apply(self, value: DataStructure):
         """
         对单个元素进行处理。
@@ -42,7 +41,6 @@ class BasePipeline(Transform):
         """
         return value
 
-    @abstractmethod
     def apply_batch(self, value: List) -> List:
         """
         对整个序列进行批量处理。

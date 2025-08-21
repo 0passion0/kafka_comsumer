@@ -1,5 +1,5 @@
 from application.consumers.base_consumer import BaseConsumer
-from application.pipelines.information_deduplication_pipeline import informationDeduplicationPipeline
+from application.pipelines.information_deduplication_pipeline import InformationDeduplicationPipeline
 from application.pipelines.information_into_pipeline import InformationIntoPipeline
 
 
@@ -19,4 +19,4 @@ class InformationConsumer(BaseConsumer):
     """
 
     # 定义具体处理流程的 Pipeline 顺序
-    pipe_list = [informationDeduplicationPipeline(), InformationIntoPipeline()]
+    pipe_list = [InformationDeduplicationPipeline(), InformationIntoPipeline()]

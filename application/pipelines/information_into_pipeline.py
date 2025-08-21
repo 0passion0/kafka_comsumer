@@ -13,6 +13,7 @@ class InformationIntoPipeline(BasePipeline):
     """
     将信息对象转换为数据库可插入格式并批量写入 MySQL。
     """
+    change_data_structure = False
 
     def apply(self, value: InformationDataStructure):
         """
@@ -43,11 +44,14 @@ class InformationIntoPipeline(BasePipeline):
                     "display_order": index + 1  # 展示顺序（从1开始）
                 }
                 for index, link in enumerate(value.affiliated_data["link_data"])
+            ],
+            'information_section':[
+
             ]
         }
 
     @log_execution
-    @get_database_connection().atomic()
+    @get_database_connection().atomic() #保证事务
     def apply_batch(self, value: List) -> List:
         """
         批量插入数据库。
