@@ -27,3 +27,12 @@ class InformationList(BaseModel):
     class Meta:
         table_name = 'information_list'
         database = get_database_connection('default')  # 使用默认数据库
+
+if __name__ == '__main__':
+    # 查询所有 information_id
+    all_ids = InformationList.select(InformationList.information_id)
+
+    # 转成 set
+    id_set = {record.information_id for record in all_ids}
+
+    print(id_set)

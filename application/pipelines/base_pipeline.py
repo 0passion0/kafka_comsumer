@@ -40,7 +40,7 @@ class BasePipeline(Transform):
         对单个元素进行处理。
         子类必须实现。
         """
-        pass
+        return value
 
     @abstractmethod
     def apply_batch(self, value: List) -> List:
