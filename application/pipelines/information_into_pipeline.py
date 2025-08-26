@@ -5,11 +5,12 @@ from typing import List
 from urllib.parse import urlparse
 
 from application.db import get_database_connection
-from application.db.info.information_attachments import InformationAttachments
-from application.db.info.information_list import InformationList
-from application.db.info.information_section_list import InformationSectionList
-from application.db.info.information_tags_relationship import InformationTagsRelationship
-from application.db.info.resource_source import ResourceSource
+from application.db.info.InformationAttachments import InformationAttachments
+from application.db.info.InformationList import InformationList
+from application.db.info.InformationSectionList import InformationSectionList
+from application.db.info.InformationTagsRelationship import InformationTagsRelationship
+from application.db.info.ResourceSource import ResourceSource
+
 from application.models.kafka_models.information_data_structure import InformationDataStructure
 from application.pipelines.base_pipeline import BasePipeline
 from application.utils.decorators import log_execution
@@ -22,7 +23,7 @@ class InformationIntoPipeline(BasePipeline):
     change_data_structure = False  # 不改变数据
     # 临时
     tag_code = {
-        "information_nsfc": "nsfc",  # 标签代码
+        "information_nsfc": "info_nsfc",  # 标签代码
     }
 
     def apply(self, value: InformationDataStructure):

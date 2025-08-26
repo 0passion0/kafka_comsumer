@@ -1,6 +1,9 @@
 from __future__ import annotations  # 允许在类型注解中使用前向引用
+
+from dataclasses import Field
+
 import faust
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from application.models.kafka_models.base_data_structure import DataStructure
 
@@ -16,10 +19,10 @@ class DataPayload(faust.Record):
         info_author (str): 信息作者
         description (str): 信息的详细描述或摘要
     """
-    info_date: str
-    info_section: List
-    info_author: str
-    description: str
+    info_date: Optional[str] = None
+    info_section: List[Any] = []
+    info_author: Optional[str] = None
+    description: Optional[str] = None
 
 
 # ---------- 子 Record：metadata ----------

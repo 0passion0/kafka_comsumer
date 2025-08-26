@@ -1,12 +1,15 @@
 from peewee import (
-    MySQLDatabase, Model,
-    AutoField, CharField, IntegerField, SQL, TextField
+    MySQLDatabase, Model, IntegerField, DateTimeField, AutoField, SQL,
 )
 from application.settings import MYSQL_DATABASES
-import json
 
 
-class BaseModel(Model):
+class BaseMysqlModel(Model):
+    list_id = AutoField()  # 自增主键
+    is_del = IntegerField(constraints=[SQL("DEFAULT 0")])  # 是否删除：0-否，1-是
+    update_time = DateTimeField(null=True)  # 更新时间
+    create_time = DateTimeField(constraints=[SQL("DEFAULT CURRENT_TIMESTAMP")])  # 创建时间
+
     class Meta:
         database = None  # 将在子类中设置具体的数据库连接
 

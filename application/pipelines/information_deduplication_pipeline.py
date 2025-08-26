@@ -1,6 +1,6 @@
 from typing import List
 
-from application.db.info.information_list import InformationList
+from application.db.info.InformationList import InformationList
 from application.pipelines.base_pipeline import BasePipeline
 
 

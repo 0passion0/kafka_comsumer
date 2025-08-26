@@ -9,6 +9,7 @@ from application.settings import MYSQL_DATABASES
 # 存储数据库连接实例的字典
 database_connections = {}
 
+
 def init_database_connections():
     """
     初始化所有数据库连接
@@ -21,6 +22,7 @@ def init_database_connections():
             host=db_config['host'],
             port=db_config['port']
         )
+
 
 def get_database_connection(db_key='default'):
     """
@@ -36,8 +38,9 @@ def get_database_connection(db_key='default'):
         raise ValueError(f"Database connection '{db_key}' not found. Make sure to initialize connections first.")
     return database_connections[db_key]
 
+
 # 初始化所有数据库连接
 init_database_connections()
 
 # 确保在导入模型前初始化数据库连接
-from .base_model import BaseModel
+from .BaseMysqlModel import BaseMysqlModel

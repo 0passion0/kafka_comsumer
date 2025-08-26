@@ -3,12 +3,11 @@ from peewee import (CharField, IntegerField, AutoField, SQL, DateField
 from playhouse.mysql_ext import JSONField
 
 from application.db import get_database_connection
-from application.db.base_model import BaseModel
+from application.db.BaseMysqlModel import BaseMysqlModel
 
 
-class InformationList(BaseModel):
+class InformationList(BaseMysqlModel):
     """资讯主表，存储资讯基本信息"""
-    list_id = AutoField()  # 自增主键
     information_id = CharField(index=True)  # 资讯ID，主键
     source_id = CharField(index=True)  # 来源ID，外键
     information_name = JSONField()  # 资讯名称，存储原名称和翻译等
@@ -22,7 +21,6 @@ class InformationList(BaseModel):
     collection_method = CharField()  # 数据采集方式：0-机器采集，1-人工录入
     manual_review_status = CharField()  # 人工审核状态：0-待审核，1-审核通过，2-审核未通过
     machine_review_status = CharField()  # 机器审核状态：0-待审核，1-审核通过，2-审核未通过
-    is_deleted = IntegerField(constraints=[SQL("DEFAULT 0")])  # 是否删除：0-否，1-是
 
     class Meta:
         table_name = 'information_list'

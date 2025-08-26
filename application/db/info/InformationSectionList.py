@@ -4,12 +4,11 @@ from peewee import (CharField, IntegerField,
 from playhouse.mysql_ext import JSONField
 
 from application.db import get_database_connection
-from application.db.base_model import BaseModel
+from application.db.BaseMysqlModel import BaseMysqlModel
 
 
-class InformationSectionList(BaseModel):
+class InformationSectionList(BaseMysqlModel):
     """资讯池段落列表"""
-    list_id = AutoField()  # 列表ID，自增主键
     section_id = CharField(index=True)  # 段落ID（si+时间戳+随机数）
     information_id = CharField(index=True)  # 资讯ID
     section_order = IntegerField()  # 段落排序
@@ -21,10 +20,10 @@ class InformationSectionList(BaseModel):
     dst_text = JSONField(null=True)  # 段落译文（富文本 JSON）
     media_info = TextField(null=True)  # 媒体信息：图片/视频/音频/表格/公式等
     md5_encode = CharField(index=True)  # 段落 MD5 散列，用于去重
-    is_del = IntegerField(constraints=[SQL("DEFAULT 0")])  # 是否删除：0-否，1-是
-    update_time = DateTimeField(null=True)  # 更新时间
-    create_time = DateTimeField(constraints=[SQL("DEFAULT CURRENT_TIMESTAMP")])  # 创建时间
+
 
     class Meta:
         table_name = 'information_section_list'
         database = get_database_connection('default')  # 使用默认数据库
+
+
