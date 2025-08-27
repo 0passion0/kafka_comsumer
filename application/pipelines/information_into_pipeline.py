@@ -5,11 +5,11 @@ from typing import List
 from urllib.parse import urlparse
 
 from application.db import get_database_connection
-from application.db.info.InformationAttachments import InformationAttachments
-from application.db.info.InformationList import InformationList
-from application.db.info.InformationSectionList import InformationSectionList
-from application.db.info.InformationTagsRelationship import InformationTagsRelationship
-from application.db.info.ResourceSource import ResourceSource
+from application.db.info.ResourceInformationAttachmentList import ResourceInformationAttachmentList
+from application.db.info.ResourceInformationList import ResourceInformationList
+from application.db.info.ResourceInformationSectionList import ResourceInformationSectionList
+from application.db.info.ResourceInformationTagsRelation import ResourceInformationTagsRelation
+from application.db.info.ResourceSourceDict import ResourceSourceDict
 
 from application.models.kafka_models.information_data_structure import InformationDataStructure
 from application.pipelines.base_pipeline import BasePipeline
@@ -86,10 +86,10 @@ class InformationIntoPipeline(BasePipeline):
             into_information_tagging_relationships.append(item['information_tagging_relationships'])
             into_information_attachment.extend(item['information_attachment'])
             into_information_section.extend(item['information_section'])
-        InformationList.insert_many(into_information_list).execute()  # 资讯列表
-        InformationTagsRelationship.insert_many(into_information_tagging_relationships).execute()  # 资讯标签关系
-        InformationAttachments.insert_many(into_information_attachment).execute()  # 资讯附件
-        InformationSectionList.insert_many(into_information_section).execute()  # 资讯段落
+        ResourceInformationList.insert_many(into_information_list).execute()  # 资讯列表
+        ResourceInformationTagsRelation.insert_many(into_information_tagging_relationships).execute()  # 资讯标签关系
+        ResourceInformationAttachmentList.insert_many(into_information_attachment).execute()  # 资讯附件
+        ResourceInformationSectionList.insert_many(into_information_section).execute()  # 资讯段落
         return value
 
     @staticmethod
@@ -99,6 +99,6 @@ class InformationIntoPipeline(BasePipeline):
         """
         parsed_url = urlparse(url)
         domain = parsed_url.netloc  # 结果: "www.nsfc.gov.cn"
-        record = ResourceSource.get_or_none(ResourceSource.source_main_link == domain)
+        record = ResourceSourceDict.get_or_none(ResourceSourceDict.source_main_link == domain)
 
         return record.source_id
