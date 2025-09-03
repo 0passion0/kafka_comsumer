@@ -39,7 +39,7 @@ class MetaPayload(faust.Record):
 
 
 # ---------- 主数据结构：InformationDataStructure ----------
-class InformationDataStructure(DataStructure):
+class InformationDataStructure( DataStructure):
     """
     信息数据结构，用于在Kafka中传递结构化的信息数据。
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from application.db.info.ResourceInformationList import ResourceInformationList
+from application.db.mysql_db.info.ResourceInformationList import ResourceInformationList
 from application.pipelines.base_pipeline import BasePipeline
 
 
