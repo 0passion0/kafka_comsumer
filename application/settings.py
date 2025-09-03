@@ -6,10 +6,11 @@ BATCH_CONFIG = {
 
 # Kafka配置
 KAFKA_CONFIG = {
-    "default": {
-        'broker': 'kafka://180.76.250.147:19092,kafka://180.76.250.147:19096,kafka://180.76.250.147:19100',
-        'app_name': 'faust_mysql_batch'
-    },
+    "pathway": {
+        "bootstrap.servers": "180.76.250.147:19092",  # Kafka broker 地址
+        "security.protocol": "PLAINTEXT",  # 安全协议
+        "group.id": "pathway-consumer-group",  # 消费者组ID
+    }
 }
 TOPIC_CONFIG = {
     "default": {

@@ -1,0 +1,19 @@
+source:
+  docker_image: "airbyte/source-mongodb-v2:latest"
+  config:
+    database_config:
+      cluster_type: "SELF_MANAGED_REPLICA_SET"
+      connection_string: "mongodb://47.92.65.175:27017"
+      databases:
+        - "tlg"
+      username: "admin"
+      password: "StrongP@ssw0rd"  # 或直接用环境变量注入
+      auth_source: "admin"
+      schema_enforced: true
+    initial_waiting_seconds: 300
+    queue_size: 10000
+    discover_sample_size: 10000
+    discover_timeout_seconds: 600
+    invalid_cdc_cursor_position_behavior: "Fail sync"
+    update_capture_mode: "Lookup"
+    initial_load_timeout_hours: 8

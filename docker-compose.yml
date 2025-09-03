@@ -1,0 +1,11 @@
+services:
+  py312_pathway:
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/python:3.12
+    container_name: py312_pathway_workspace
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      - DOCKER_HOST=tcp://host.docker.internal:2375

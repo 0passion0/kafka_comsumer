@@ -1,9 +1,8 @@
 import copy
-from abc import abstractmethod
-from typing import List, Any
+from typing import List
 from fasttransform import Transform
 
-from application.models.kafka_models.base_data_structure import DataStructure
+from application.models.kafka_pathway_schema import DataStructure
 
 
 class BasePipeline(Transform):

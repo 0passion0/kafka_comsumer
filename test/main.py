@@ -1,65 +1,65 @@
-import copy
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
+import pathway as pw
+import time as tt
 
-from fasttransform import Transform, Pipeline
+class PrintBatchObserver(pw.io.python.ConnectorObserver):
+    """
+    A simple observer to collect data into batches and print them.
 
-from application.utils.decorators import log_execution
-
-
-@dataclass
-class Data:
-    title: str
-    author: str
-    viewCount: int
-
-
-class StripTitle(Transform):
-    def encodes(self, x: Data): x.title = x.title.strip(); return x
-
-
-class NormalizeAuthor(Transform):
-    out_fields = ['author']
-
-    def encodes(self, x: Data):
-        time.sleep(3)
-        x.author = x.author.title()
-        return x
-
-
-class ClampViewCount(Transform):
-    out_fields = ['viewCount']
-
-    def encodes(self, x: Data):
-        time.sleep(3)
-        x.viewCount = max(0, int(x.viewCount))
-        return x
-
-class ParallelGroup(Transform):
-    def __init__(self, *transforms):
+    This helps in verifying that the data pipeline is receiving data
+    without flooding the console.
+    """
+    def __init__(self, batch_size=20, time_window=60):
         super().__init__()
-        self.transforms = transforms
+        self.batch = []
+        self.batch_size = batch_size
+        self.time_window = time_window
+        self.last_batch_time = tt.time()
 
-    def encodes(self, x):
-        with ThreadPoolExecutor(max_workers=len(self.transforms)) as ex:
-            futures = {ex.submit(t, copy.deepcopy(x)): t for t in self.transforms}
+    def on_change(self, key, row, time: int, is_addition: bool):
+        """Called for each new row of data."""
+        self.batch.append(row)
+        now = tt.time()
+        # Flush the batch if it's full or the time window has passed
+        if len(self.batch) >= self.batch_size or (now - self.last_batch_time >= self.time_window):
+            self._flush(now)
 
-            for fut in as_completed(futures):
-                res = fut.result()
-                t = futures[fut]
-                #: 如果 transform 有指定 out_fields，则只更新这些字段
-                out_fields = getattr(t, 'out_fields', None)
-                if out_fields:
-                    for f in out_fields:
-                        setattr(x, f, getattr(res, f))
-                else:
-                    #: 没指定则更新全部
-                    x.__dict__.update(res.__dict__)
-        return x
+    def on_close(self):
+        """Ensures any remaining data in the batch is printed on shutdown."""
+        if self.batch:
+            self._flush(tt.time())
+
+    def _flush(self, now):
+        """Prints the current batch of data and resets it."""
+        print(f"\n[BatchObserver] Processing batch of {len(self.batch)} rows:")
+        print("=" * 60)
+        # Uncomment the following lines to print each row in the batch
+        # for r in self.batch:
+        #     print(r)
+        self.batch = []
+        self.last_batch_time = now
+        print(f"Batch processed. Waiting for next batch...")
+        print("=" * 60)
 
 
-pipeline = Pipeline([
-    StripTitle(),
-    ParallelGroup(NormalizeAuthor(), ClampViewCount()),  # 并行
-])
+# 1) Read from MongoDB using Airbyte Connector
+# The pw.io.airbyte.read function orchestrates running the specified
+# Docker container and feeding it the configuration from the YAML file.
+
+# Fixed call:
+# - The docker_image is now passed as a named argument.
+# - The config_path points to our simplified YAML file.
+mongo_tbl = pw.io.airbyte.read(
+    config_file_path="connections/mongodb_source.yaml",
+    docker_image="airbyte/source-mongodb-v2:latest",
+    streams=["tlg.book"],
+    mode="streaming"
+)
+
+# 2) Write the output to our custom Python observer
+# This will print the data in batches as it arrives from MongoDB.
+pw.io.python.write(mongo_tbl, PrintBatchObserver(batch_size=10, time_window=5))
+
+# 3) Launch the Pathway computation graph
+print("Starting Pathway data pipeline...")
+print("Listening for changes in MongoDB stream 'tlg.book'...")
+pw.run()
